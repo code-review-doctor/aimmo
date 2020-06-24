@@ -1,4 +1,4 @@
-from simulation.avatar.avatar_wrapper import AvatarWrapper
+from simulation.avatar.avatar_wrapper import avatar_wrapper_factory
 from simulation.avatar.avatar_appearance import AvatarAppearance
 
 
@@ -11,8 +11,13 @@ class AvatarManager(object):
         self.avatars_by_id = {}
 
     def add_avatar(self, player_id, location):
-        avatar = AvatarWrapper(
-            player_id, location, AvatarAppearance("#000", "#ddd", "#777", "#fff")
+        worksheet_id = 2
+
+        avatar = avatar_wrapper_factory(
+            worksheet_id,
+            player_id,
+            location,
+            AvatarAppearance("#000", "#ddd", "#777", "#fff"),
         )
         self.avatars_by_id[player_id] = avatar
         return avatar

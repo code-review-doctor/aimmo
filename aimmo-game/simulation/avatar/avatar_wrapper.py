@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from simulation.interactables.pickups.artefact import Artefact
 
 
-class AvatarWrapper(object):
+class BasicAvatarWrapper(object):
     """
     The application's view of a character, not to be confused with "Avatar",
     the player-supplied code.
@@ -23,8 +23,6 @@ class AvatarWrapper(object):
         self.orientation = "north"
         self.health = 5
         self.score = 0
-        self.backpack: "List[Artefact]" = []
-        self.BACKPACK_SIZE = 10
         self.events = []
         self.avatar_appearance = avatar_appearance
         self.effects = set()
@@ -113,6 +111,25 @@ class AvatarWrapper(object):
         self.health -= applied_dmg
         return applied_dmg
 
+    def serialize(self):
+        return {
+            "health": self.health,
+            "location": self.location.serialize(),
+            "score": self.score,
+            "id": self.player_id,
+            "orientation": self.orientation,
+        }
+
+    def __repr__(self):
+        return f"Avatar(id={self.player_id}, location={self.location}, health={self.health}, score={self.score})"
+
+
+class Worksheet2AvatarWrapper(BasicAvatarWrapper):
+    def __init__(self, player_id, initial_location, avatar_appearance):
+        super().__init__(player_id, initial_location, avatar_appearance)
+        self.backpack: "List[Artefact]" = []
+        self.BACKPACK_SIZE = 10
+
     def backpack_has_space(self):
         return len(self.backpack) < self.BACKPACK_SIZE
 
@@ -128,3 +145,14 @@ class AvatarWrapper(object):
 
     def __repr__(self):
         return f"Avatar(id={self.player_id}, location={self.location}, health={self.health}, score={self.score}, backpack={[artefact.serialize() for artefact in self.backpack]})"
+
+
+def avatar_wrapper_factory(
+    worksheet_id, player_id, initial_location, avatar_appearance
+):
+    if worksheet_id == 1:
+        return BasicAvatarWrapper(player_id, initial_location, avatar_appearance)
+    elif worksheet_id == 2:
+        return Worksheet2AvatarWrapper(player_id, initial_location, avatar_appearance)
+    else:
+        raise Exception("Worksheet not recognised")

@@ -17,10 +17,10 @@ export async function initializePyodide () {
 
   await pyodide.runPythonAsync(`
 from simulation import direction
-from simulation import location
+from simulation.location import Location
 from simulation.action import MoveAction, PickupAction, WaitAction
 from simulation.world_map import WorldMapCreator
-from simulation.avatar_state import AvatarState
+from simulation.avatar_state import avatar_state_factory
 from io import StringIO
 import contextlib
 
@@ -53,7 +53,11 @@ async function computeNextAction (gameState, playerAvatarID): Promise<ComputedTu
     return await pyodide.runPythonAsync(`
 game_state = ${JSON.stringify(gameState)}
 world_map = WorldMapCreator.generate_world_map_from_game_state(game_state)
-avatar_state = AvatarState(**${JSON.stringify(avatarState)})
+worksheet_id = 2
+avatar_data = ${JSON.stringify(avatarState)}
+location = Location(avatar_data['location']['x'], avatar_data['location']['y'])
+del avatar_data['location']
+avatar_state = avatar_state_factory(worksheet_id, location, avatar_data)
 serialized_action = {"action_type": "wait"}
 with capture_output() as output:
     action = next_turn(world_map, avatar_state)

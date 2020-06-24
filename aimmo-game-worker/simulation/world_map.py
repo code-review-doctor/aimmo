@@ -1,4 +1,4 @@
-from .avatar_state import AvatarState
+from .avatar_state import avatar_state_factory
 from .location import Location
 from typing import Dict
 
@@ -78,13 +78,11 @@ class WorldMapCreator:
 
         for player in game_state["players"]:
             location = Location(player["location"]["x"], player["location"]["y"])
-            cells[location].player = AvatarState(
-                {"x": location.x, "y": location.y},
-                player["health"],
-                player["score"],
-                player["backpack"],
-                player["id"],
-                player["orientation"],
+
+            worksheet_id = 2
+
+            cells[location].player = avatar_state_factory(
+                worksheet_id, location, player
             )
 
         return WorldMap(cells)
