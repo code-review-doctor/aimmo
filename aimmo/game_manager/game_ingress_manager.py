@@ -51,5 +51,7 @@ class GameIngressManager:
     def _get_path_for_game_name(
         self, game_name: str
     ) -> NetworkingV1beta1HTTPIngressPath:
-        backend = NetworkingV1beta1IngressBackend(game_name, 80)
+        backend = NetworkingV1beta1IngressBackend(
+            service_name=game_name, service_port=80
+        )
         return NetworkingV1beta1HTTPIngressPath(backend, f"/{game_name}(/|$)(.*)")

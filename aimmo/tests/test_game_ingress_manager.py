@@ -25,7 +25,7 @@ def game_ingress_manager():
 
 def test_add_game_path_to_ingress(game_ingress_manager: GameIngressManager):
     game_name = "game-123-test"
-    backend = NetworkingV1beta1IngressBackend(game_name, 80)
+    backend = NetworkingV1beta1IngressBackend(service_name=game_name, service_port=80)
     path = NetworkingV1beta1HTTPIngressPath(backend, f"/{game_name}(/|$)(.*)")
     expected_patch = [
         {"op": "add", "path": "/spec/rules/0/http/paths/-", "value": path}
